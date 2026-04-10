@@ -1,0 +1,53 @@
+{
+  "name": "git-blame",
+  "displayName": "Git Blame",
+  "description": "Free inline git blame annotations for VSCode",
+  "version": "0.0.1",
+  "engines": { "vscode": "^1.85.0" },
+  "categories": ["SCM Providers"],
+  "activationEvents": ["onStartupFinished"],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "configuration": {
+      "title": "Git Blame",
+      "properties": {
+        "gitblame.inlineAnnotation.enabled": {
+          "type": "boolean",
+          "default": true,
+          "description": "在光标所在行行尾显示 Git Blame 注解"
+        },
+        "gitblame.inlineAnnotation.format": {
+          "type": "string",
+          "default": "${author}, ${timeAgo} · ${summary}",
+          "description": "注解格式模板，支持变量：${author} ${timeAgo} ${summary} ${hash}"
+        },
+        "gitblame.hoverTooltip.enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "鼠标悬停时显示提交详情 Tooltip"
+        }
+      }
+    },
+    "commands": [
+      {
+        "command": "gitblame.showCommitDiff",
+        "title": "Git Blame: 查看提交变更"
+      }
+    ]
+  },
+  "scripts": {
+    "build": "node esbuild.js",
+    "watch": "node esbuild.js --watch",
+    "test": "vitest run",
+    "package": "vsce package"
+  },
+  "devDependencies": {
+    "@types/node": "^20.19.39",
+    "@types/vscode": "^1.115.0",
+    "@vscode/test-cli": "^0.0.4",
+    "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.20.2",
+    "typescript": "^5.9.3",
+    "vitest": "^1.6.1"
+  }
+}
