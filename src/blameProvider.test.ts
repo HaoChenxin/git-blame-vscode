@@ -5,6 +5,22 @@ import { BlameProvider } from './blameProvider'
 vi.mock('child_process')
 
 // git blame --porcelain 的真实输出样本
+// 注意：同一 hash 第二次出现时不重复输出元数据（这是真实 git 行为）
+const PORCELAIN_OUTPUT_MULTI_LINE = `a3f9c12abc1234567890abcdef1234567890abcd 1 1 2
+author 张三
+author-mail <zhangsan@company.com>
+author-time 1704691200
+author-tz +0800
+committer 张三
+committer-time 1704691200
+committer-tz +0800
+summary fix: 修复登录逻辑空指针问题
+filename src/user.ts
+\tconst user = getUser(id)
+a3f9c12abc1234567890abcdef1234567890abcd 2 2
+\treturn user.name
+`
+
 const PORCELAIN_OUTPUT = `a3f9c12abc1234567890abcdef1234567890abcd 1 1 1
 author 张三
 author-mail <zhangsan@company.com>
@@ -96,6 +112,14 @@ describe('BlameProvider', () => {
     await provider.getBlameForFile('/repo/src/user.ts', '/repo')
     await provider.getBlameForFile('/repo/src/user.ts', '/repo')
     expect(cp.spawn).toHaveBeenCalledTimes(1)
+  })
+
+  it('同一 commit 的多行复用元数据，第 2 行 authorTime 不为 0', async () => {
+    mockSpawn(PORCELAIN_OUTPUT_MULTI_LINE)
+    const result = await provider.getBlameForFile('/repo/src/user.ts', '/repo')
+    const line2 = result?.get(2)
+    expect(line2?.authorTime).toBe(1704691200)
+    expect(line2?.author).toBe('张三')
   })
 
   it('invalidate 后再次调用会重新执行 git blame', async () => {

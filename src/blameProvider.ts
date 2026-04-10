@@ -55,6 +55,8 @@ export class BlameProvider {
 
   private parse(output: string): BlameMap {
     const map: BlameMap = new Map()
+    // 同一个 hash 的元数据只在首次出现时输出，后续行复用缓存
+    const commitCache = new Map<string, BlameInfo>()
     const lines = output.split('\n')
     let i = 0
 
@@ -68,7 +70,17 @@ export class BlameProvider {
 
       const hash = headerMatch[1]
       const finalLine = parseInt(headerMatch[2], 10)
+      i++
 
+      // 同一 hash 再次出现：直接复用已解析的 BlameInfo，跳过代码行
+      if (commitCache.has(hash)) {
+        while (i < lines.length && !lines[i].startsWith('\t')) i++
+        i++ // 跳过代码行
+        map.set(finalLine, commitCache.get(hash)!)
+        continue
+      }
+
+      // 首次出现：解析元数据
       const info: BlameInfo = {
         hash,
         isUncommitted: hash === UNCOMMITTED_HASH,
@@ -80,8 +92,6 @@ export class BlameProvider {
         filename: '',
       }
 
-      i++
-      // 读取后续 key-value 行，直到遇到 \t 开头的代码行
       while (i < lines.length && !lines[i].startsWith('\t')) {
         const line = lines[i]
         if (line.startsWith('author '))          info.author = line.slice(7)
@@ -92,8 +102,9 @@ export class BlameProvider {
         else if (line.startsWith('filename '))    info.filename = line.slice(9)
         i++
       }
-      i++ // 跳过 \t 开头的代码行
+      i++ // 跳过代码行
 
+      commitCache.set(hash, info)
       map.set(finalLine, info)
     }
 
