@@ -60,7 +60,7 @@ export class BlameProvider {
 
     while (i < lines.length) {
       const header = lines[i]
-      if (!header || header.startsWith('\t')) { i++; continue }
+      if (header.startsWith('\t')) { i++; continue }
 
       // 行头格式: <hash> <orig-line> <final-line> [<num-lines>]
       const headerMatch = header.match(/^([0-9a-f]{40}) \d+ (\d+)/)
@@ -69,7 +69,7 @@ export class BlameProvider {
       const hash = headerMatch[1]
       const finalLine = parseInt(headerMatch[2], 10)
 
-      const info: Partial<BlameInfo> & { hash: string } = {
+      const info: BlameInfo = {
         hash,
         isUncommitted: hash === UNCOMMITTED_HASH,
         author: '',
@@ -94,7 +94,7 @@ export class BlameProvider {
       }
       i++ // 跳过 \t 开头的代码行
 
-      map.set(finalLine, info as BlameInfo)
+      map.set(finalLine, info)
     }
 
     return map
