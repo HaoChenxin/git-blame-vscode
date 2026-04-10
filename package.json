@@ -11,7 +11,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/PLACEHOLDER_PUBLISHER_ID/git-blame-vscode"
+    "url": "https://github.com/HaoChenxin/git-blame-vscode"
   },
   "engines": {
     "vscode": "^1.85.0"
