@@ -6,7 +6,7 @@ vi.mock('vscode', () => ({
     getConfiguration: vi.fn(),
     onDidChangeConfiguration: vi.fn(() => ({ dispose: vi.fn() })),
   },
-}), { virtual: true })
+}))
 
 import * as vscode from 'vscode'
 import { ConfigManager } from './configManager'
