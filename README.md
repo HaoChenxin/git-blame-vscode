@@ -38,10 +38,10 @@ const user = getUser(id)    张三, 2天前 · fix: 修复登录逻辑
 VSCode 暂不支持从 Open VSX 直接搜索安装，请通过以下方式手动安装：
 
 1. 前往 [Releases](https://github.com/HaoChenxin/git-blame-vscode/releases/latest) 下载 `git-blame-x.x.x.vsix`
-2. 在终端执行：
+2. 在终端执行（替换为实际下载路径）：
 
 ```bash
-code --install-extension git-blame-x.x.x.vsix
+code --install-extension ~/Downloads/git-blame-0.0.1.vsix
 ```
 
 或在 VSCode 中：`Cmd+Shift+P` → `Install from VSIX` → 选择下载的文件
